@@ -77,6 +77,10 @@ button.active {
     box-shadow: var(--shadow);
 }
 
+body.player-hidden {
+    padding-bottom: 18px;
+}
+
 .sidebar {
     position: sticky;
     top: 16px;
@@ -262,6 +266,7 @@ button.active {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: #15171c;
+    cursor: pointer;
 }
 
 .song-card.active {
@@ -315,6 +320,42 @@ button.active {
     min-height: 86px;
     padding: 14px;
     border-radius: 8px;
+    transition: transform 0.24s ease, opacity 0.24s ease;
+}
+
+body.player-hidden .player-bar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(100% + 28px));
+}
+
+.hide-player {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    min-height: 34px;
+    padding: 6px 10px;
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.show-player {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    z-index: 12;
+    display: none;
+    background: var(--green);
+    color: #06150b;
+    border-color: var(--green);
+    font-weight: 800;
+    box-shadow: var(--shadow);
+}
+
+body.player-hidden .show-player {
+    display: block;
 }
 
 .mini-track {
@@ -322,6 +363,7 @@ button.active {
     align-items: center;
     gap: 12px;
     min-width: 0;
+    cursor: pointer;
 }
 
 .mini-track img {
@@ -390,6 +432,89 @@ button.active {
     text-align: center;
 }
 
+.track-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.track-drawer.open {
+    pointer-events: auto;
+}
+
+.drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.58);
+    opacity: 0;
+    transition: opacity 0.24s ease;
+}
+
+.track-drawer.open .drawer-backdrop {
+    opacity: 1;
+}
+
+.drawer-panel {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    bottom: 16px;
+    width: min(430px, calc(100% - 32px));
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background:
+        linear-gradient(160deg, rgba(30, 215, 96, 0.18), rgba(89, 166, 255, 0.12) 38%, transparent),
+        var(--panel);
+    box-shadow: var(--shadow);
+    overflow: auto;
+    transform: translateX(calc(100% + 28px));
+    transition: transform 0.24s ease;
+}
+
+.track-drawer.open .drawer-panel {
+    transform: translateX(0);
+}
+
+.drawer-close {
+    justify-self: end;
+}
+
+.drawer-panel img {
+    width: 100%;
+    max-width: 330px;
+    aspect-ratio: 1;
+    justify-self: center;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.drawer-panel h2,
+.drawer-panel p {
+    margin: 0;
+}
+
+.drawer-panel h2 {
+    font-size: clamp(30px, 5vw, 48px);
+    line-height: 1;
+    overflow-wrap: anywhere;
+}
+
+.drawer-panel #drawerArtist {
+    color: var(--muted);
+    font-size: 18px;
+}
+
+.drawer-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
 /* Large laptops and small desktops keep the player readable without crowding. */
 @media (max-width: 1200px) {
     .app-shell {
@@ -423,6 +548,7 @@ button.active {
     .player-bar {
         grid-template-columns: 1fr;
         gap: 12px;
+        padding-top: 48px;
     }
 
     .extras {
@@ -493,6 +619,25 @@ button.active {
         right: 10px;
         bottom: 10px;
         padding: 12px;
+        padding-top: 46px;
+    }
+
+    .hide-player {
+        display: block;
+    }
+
+    .drawer-panel {
+        top: auto;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: auto;
+        max-height: calc(100dvh - 28px);
+        transform: translateY(calc(100% + 28px));
+    }
+
+    .track-drawer.open .drawer-panel {
+        transform: translateY(0);
     }
 
     .buttons {
@@ -588,6 +733,18 @@ button.active {
     .volume {
         grid-column: 1 / -1;
         min-width: 0;
+    }
+
+    .drawer-panel {
+        padding: 14px;
+    }
+
+    .drawer-panel img {
+        max-width: 240px;
+    }
+
+    .drawer-actions {
+        grid-template-columns: 1fr;
     }
 }
 

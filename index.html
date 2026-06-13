@@ -58,7 +58,9 @@
         </section>
     </main>
 
-    <footer class="player-bar" aria-label="Audio player">
+    <footer class="player-bar" id="playerBar" aria-label="Audio player">
+        <button class="hide-player" id="hidePlayerBtn" type="button" title="Hide music player">X</button>
+
         <div class="mini-track">
             <img id="miniCover" src="" alt="">
             <div>
@@ -91,6 +93,24 @@
             </label>
         </div>
     </footer>
+
+    <button class="show-player" id="showPlayerBtn" type="button">Show Player</button>
+
+    <section class="track-drawer" id="trackDrawer" aria-label="Song details" aria-hidden="true">
+        <div class="drawer-backdrop" id="drawerBackdrop"></div>
+        <article class="drawer-panel">
+            <button class="drawer-close" id="drawerCloseBtn" type="button" title="Close song details">X</button>
+            <img id="drawerCover" src="" alt="Selected song cover">
+            <p class="status-pill" id="drawerFolder">Music</p>
+            <h2 id="drawerTitle">Song Title</h2>
+            <p id="drawerArtist">Artist</p>
+            <p class="track-note">Tap play to start this track. The audio is copyright-safe demo music.</p>
+            <div class="drawer-actions">
+                <button id="drawerPlayBtn" class="primary-btn" type="button">Play</button>
+                <button id="drawerLikeBtn" type="button">Like</button>
+            </div>
+        </article>
+    </section>
 
     <audio id="audioPlayer" preload="metadata"></audio>
     <script src="js/app.js"></script>

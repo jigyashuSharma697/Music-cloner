@@ -166,8 +166,21 @@ const miniArtist = document.querySelector("#miniArtist");
 const folderName = document.querySelector("#folderName");
 const libraryTitle = document.querySelector("#libraryTitle");
 const songCount = document.querySelector("#songCount");
+const hidePlayerBtn = document.querySelector("#hidePlayerBtn");
+const showPlayerBtn = document.querySelector("#showPlayerBtn");
+const trackDrawer = document.querySelector("#trackDrawer");
+const drawerBackdrop = document.querySelector("#drawerBackdrop");
+const drawerCloseBtn = document.querySelector("#drawerCloseBtn");
+const drawerCover = document.querySelector("#drawerCover");
+const drawerFolder = document.querySelector("#drawerFolder");
+const drawerTitle = document.querySelector("#drawerTitle");
+const drawerArtist = document.querySelector("#drawerArtist");
+const drawerPlayBtn = document.querySelector("#drawerPlayBtn");
+const drawerLikeBtn = document.querySelector("#drawerLikeBtn");
+const miniTrack = document.querySelector(".mini-track");
 
 let currentIndex = 0;
+let drawerIndex = 0;
 let activeFolder = "All";
 let loopMode = "off";
 let filteredTracks = [...tracks];
@@ -236,6 +249,7 @@ function renderSongs() {
         const isLiked = likedSongs.includes(track.title);
         const card = document.createElement("article");
         card.className = `song-card ${isActive ? "active" : ""}`;
+        card.dataset.open = realIndex;
         card.innerHTML = `
             <img src="${track.cover}" alt="${track.title} cover">
             <div>
@@ -264,6 +278,7 @@ function setTrack(index, shouldPlay = true) {
     miniArtist.textContent = track.artist;
     folderName.textContent = track.folder;
     updateLikeButton();
+    updateDrawer();
     renderSongs();
 
     if (shouldPlay) {
@@ -275,6 +290,7 @@ function playCurrentTrack() {
     audio.play()
         .then(() => {
             playBtn.textContent = "Pause";
+            updateDrawer();
             renderSongs();
         })
         .catch(() => {
@@ -289,6 +305,7 @@ function togglePlay() {
     } else {
         audio.pause();
         playBtn.textContent = "Play";
+        updateDrawer();
         renderSongs();
     }
 }
@@ -299,6 +316,7 @@ function stopTrack() {
     playBtn.textContent = "Play";
     seekBar.value = 0;
     currentTime.textContent = "0:00";
+    updateDrawer();
     renderSongs();
 }
 
@@ -340,6 +358,55 @@ function updateLikeButton() {
     const title = tracks[currentIndex].title;
     likeBtn.textContent = likedSongs.includes(title) ? "Unlike" : "Like";
     likeBtn.classList.toggle("active", likedSongs.includes(title));
+    updateDrawer();
+}
+
+function openDrawer(index) {
+    drawerIndex = (index + tracks.length) % tracks.length;
+    updateDrawer();
+    trackDrawer.classList.add("open");
+    trackDrawer.setAttribute("aria-hidden", "false");
+}
+
+function closeDrawer() {
+    trackDrawer.classList.remove("open");
+    trackDrawer.setAttribute("aria-hidden", "true");
+}
+
+function updateDrawer() {
+    if (!drawerCover) {
+        return;
+    }
+
+    const track = tracks[drawerIndex];
+    const isCurrentTrack = drawerIndex === currentIndex;
+    const isLiked = likedSongs.includes(track.title);
+
+    drawerCover.src = track.cover;
+    drawerFolder.textContent = track.folder;
+    drawerTitle.textContent = track.title;
+    drawerArtist.textContent = track.artist;
+    drawerLikeBtn.textContent = isLiked ? "Unlike" : "Like";
+    drawerLikeBtn.classList.toggle("active", isLiked);
+    drawerPlayBtn.textContent = isCurrentTrack && !audio.paused ? "Pause" : "Play";
+}
+
+function playDrawerTrack() {
+    if (drawerIndex === currentIndex) {
+        togglePlay();
+        updateDrawer();
+        return;
+    }
+
+    setTrack(drawerIndex, true);
+}
+
+function hidePlayer() {
+    document.body.classList.add("player-hidden");
+}
+
+function showPlayer() {
+    document.body.classList.remove("player-hidden");
 }
 
 function toggleMute() {
@@ -375,6 +442,13 @@ likeBtn.addEventListener("click", () => toggleLike());
 muteBtn.addEventListener("click", toggleMute);
 loopBtn.addEventListener("click", cycleLoop);
 searchInput.addEventListener("input", renderSongs);
+hidePlayerBtn.addEventListener("click", hidePlayer);
+showPlayerBtn.addEventListener("click", showPlayer);
+drawerBackdrop.addEventListener("click", closeDrawer);
+drawerCloseBtn.addEventListener("click", closeDrawer);
+drawerPlayBtn.addEventListener("click", playDrawerTrack);
+drawerLikeBtn.addEventListener("click", () => toggleLike(tracks[drawerIndex].title));
+miniTrack.addEventListener("click", () => openDrawer(currentIndex));
 
 volumeControl.addEventListener("input", () => {
     audio.volume = Number(volumeControl.value);
@@ -410,6 +484,7 @@ audio.addEventListener("ended", () => {
 songGrid.addEventListener("click", (event) => {
     const playTarget = event.target.closest("[data-play]");
     const likeTarget = event.target.closest("[data-like]");
+    const cardTarget = event.target.closest("[data-open]");
 
     if (playTarget) {
         const index = Number(playTarget.dataset.play);
@@ -418,9 +493,16 @@ songGrid.addEventListener("click", (event) => {
         } else {
             setTrack(index, true);
         }
+        openDrawer(index);
+        return;
     }
 
     if (likeTarget) {
         toggleLike(likeTarget.dataset.like);
+        return;
+    }
+
+    if (cardTarget) {
+        openDrawer(Number(cardTarget.dataset.open));
     }
 });
