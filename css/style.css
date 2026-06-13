@@ -26,13 +26,14 @@ body {
         radial-gradient(circle at top right, rgba(255, 92, 138, 0.16), transparent 24rem),
         var(--bg);
     color: var(--text);
-    padding-bottom: 112px;
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
     overflow-x: hidden;
 }
 
 button,
 input {
     font: inherit;
+    min-width: 0;
 }
 
 button {
@@ -67,6 +68,7 @@ button.active {
     gap: 20px;
     width: min(1440px, calc(100% - 32px));
     margin: 16px auto;
+    min-width: 0;
 }
 
 .sidebar,
@@ -84,7 +86,7 @@ body.player-hidden {
 .sidebar {
     position: sticky;
     top: 16px;
-    height: calc(100vh - 144px);
+    height: calc(100dvh - 144px);
     border-radius: 8px;
     padding: 20px;
     overflow: auto;
@@ -168,6 +170,13 @@ body.player-hidden {
     justify-content: space-between;
     align-items: center;
     text-align: left;
+    gap: 10px;
+}
+
+.folder-btn span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .folder-btn span:last-child {
@@ -354,11 +363,14 @@ body.player-hidden {
 
 .song-card h3 {
     font-size: 16px;
+    line-height: 1.2;
 }
 
 .song-card p {
     color: var(--muted);
     font-size: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
 .card-actions {
@@ -377,13 +389,15 @@ body.player-hidden {
     position: fixed;
     left: 16px;
     right: 16px;
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 10;
     display: grid;
     grid-template-columns: minmax(210px, 1fr) minmax(360px, 1.4fr) minmax(260px, 1fr);
     gap: 16px;
     align-items: center;
     min-height: 86px;
+    max-width: 1440px;
+    margin: 0 auto;
     padding: 14px;
     border-radius: 8px;
     transition: transform 0.24s ease, opacity 0.24s ease;
@@ -410,7 +424,7 @@ body.player-hidden .player-bar {
 .show-player {
     position: fixed;
     right: 14px;
-    bottom: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
     z-index: 12;
     display: none;
     background: var(--green);
@@ -503,6 +517,7 @@ body.player-hidden .show-player {
     inset: 0;
     z-index: 30;
     pointer-events: none;
+    min-width: 0;
 }
 
 .track-drawer.open {
@@ -594,7 +609,7 @@ body.player-hidden .show-player {
 
 @media (max-width: 980px) {
     body {
-        padding-bottom: 226px;
+        padding-bottom: calc(226px + env(safe-area-inset-bottom));
     }
 
     .app-shell {
@@ -605,6 +620,7 @@ body.player-hidden .show-player {
     .sidebar {
         position: static;
         height: auto;
+        overflow: visible;
     }
 
     .folder-list {
@@ -635,7 +651,7 @@ body.player-hidden .show-player {
 /* Tablet and large phone layout. */
 @media (max-width: 760px) {
     body {
-        padding-bottom: 276px;
+        padding-bottom: calc(276px + env(safe-area-inset-bottom));
     }
 
     .app-shell {
@@ -755,7 +771,7 @@ body.player-hidden .show-player {
     .player-bar {
         left: 10px;
         right: 10px;
-        bottom: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom));
         padding: 12px;
         padding-top: 46px;
     }
@@ -769,8 +785,8 @@ body.player-hidden .show-player {
         left: 10px;
         right: 10px;
         bottom: 10px;
+        max-height: calc(100dvh - 28px - env(safe-area-inset-bottom));
         width: auto;
-        max-height: calc(100dvh - 28px);
         transform: translateY(calc(100% + 28px));
     }
 
@@ -797,7 +813,7 @@ body.player-hidden .show-player {
 /* Small mobile screens get bigger tap targets and one-column song cards. */
 @media (max-width: 520px) {
     body {
-        padding-bottom: 316px;
+        padding-bottom: calc(316px + env(safe-area-inset-bottom));
     }
 
     button {
@@ -852,6 +868,7 @@ body.player-hidden .show-player {
     .song-card {
         grid-template-columns: 78px minmax(0, 1fr);
         align-items: center;
+        min-height: 104px;
     }
 
     .song-card img {
@@ -893,7 +910,7 @@ body.player-hidden .show-player {
 /* Extra tiny phones stay usable instead of squeezing text into controls. */
 @media (max-width: 380px) {
     body {
-        padding-bottom: 342px;
+        padding-bottom: calc(342px + env(safe-area-inset-bottom));
     }
 
     .main-stage,
@@ -927,5 +944,85 @@ body.player-hidden .show-player {
     .timeline span {
         width: 34px;
         font-size: 12px;
+    }
+}
+
+/* Narrow phones around 320px need stacked cards and compact controls. */
+@media (max-width: 340px) {
+    .brand {
+        gap: 8px;
+    }
+
+    .brand h1 {
+        font-size: 21px;
+    }
+
+    .mobile-menu-btn {
+        min-width: 38px;
+        min-height: 38px;
+    }
+
+    .song-card {
+        grid-template-columns: 1fr;
+    }
+
+    .song-card img {
+        grid-row: auto;
+        max-width: 180px;
+        justify-self: center;
+    }
+
+    .card-actions {
+        grid-column: auto;
+    }
+
+    .extras,
+    .buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) 34px;
+    }
+}
+
+/* Landscape phones get a shorter player and a wider song drawer. */
+@media (max-height: 520px) and (orientation: landscape) {
+    body {
+        padding-bottom: calc(132px + env(safe-area-inset-bottom));
+    }
+
+    .player-bar {
+        grid-template-columns: minmax(160px, 0.8fr) minmax(260px, 1.2fr);
+        min-height: 74px;
+        padding: 10px;
+    }
+
+    .extras {
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
+
+    .drawer-panel {
+        top: 8px;
+        right: 8px;
+        bottom: 8px;
+        width: min(560px, calc(100% - 16px));
+    }
+
+    .drawer-panel img {
+        max-width: 180px;
+    }
+}
+
+/* Wide monitors keep the content centered instead of stretching too far. */
+@media (min-width: 1500px) {
+    .song-grid {
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
+
+    .track-copy h3 {
+        font-size: 64px;
     }
 }
