@@ -27,6 +27,7 @@ body {
         var(--bg);
     color: var(--text);
     padding-bottom: 112px;
+    overflow-x: hidden;
 }
 
 button,
@@ -35,12 +36,14 @@ input {
 }
 
 button {
+    min-width: 0;
     border: 1px solid var(--line);
     background: var(--panel-soft);
     color: var(--text);
     border-radius: 8px;
     padding: 10px 14px;
     cursor: pointer;
+    white-space: nowrap;
     transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
@@ -88,6 +91,7 @@ button.active {
     gap: 12px;
     align-items: center;
     margin-bottom: 26px;
+    min-width: 0;
 }
 
 .brand-mark {
@@ -111,6 +115,13 @@ button.active {
 .track-copy h3,
 .track-copy p {
     margin: 0;
+}
+
+.brand h1,
+.topbar h2,
+.library-head h2,
+.song-card h3 {
+    overflow-wrap: anywhere;
 }
 
 .brand p,
@@ -151,6 +162,13 @@ button.active {
     align-items: center;
     gap: 18px;
     margin-bottom: 20px;
+}
+
+.topbar > div,
+.library-head > div,
+.track-copy,
+.mini-track > div {
+    min-width: 0;
 }
 
 .eyebrow {
@@ -232,7 +250,7 @@ button.active {
 
 .song-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
     gap: 16px;
 }
 
@@ -276,6 +294,12 @@ button.active {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+}
+
+.card-actions button {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .player-bar {
@@ -343,6 +367,7 @@ button.active {
 
 .timeline input,
 .volume input {
+    min-width: 0;
     width: 100%;
     accent-color: var(--green);
 }
@@ -365,13 +390,25 @@ button.active {
     text-align: center;
 }
 
+/* Large laptops and small desktops keep the player readable without crowding. */
+@media (max-width: 1200px) {
+    .app-shell {
+        grid-template-columns: 230px minmax(0, 1fr);
+    }
+
+    .player-bar {
+        grid-template-columns: minmax(180px, 0.8fr) minmax(320px, 1.4fr) minmax(230px, 0.9fr);
+    }
+}
+
 @media (max-width: 980px) {
     body {
-        padding-bottom: 210px;
+        padding-bottom: 226px;
     }
 
     .app-shell {
         grid-template-columns: 1fr;
+        gap: 14px;
     }
 
     .sidebar {
@@ -385,17 +422,24 @@ button.active {
 
     .player-bar {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
     .extras {
         justify-content: center;
         flex-wrap: wrap;
     }
+
+    .mini-track {
+        justify-content: center;
+        text-align: left;
+    }
 }
 
-@media (max-width: 640px) {
+/* Tablet and large phone layout. */
+@media (max-width: 760px) {
     body {
-        padding-bottom: 250px;
+        padding-bottom: 276px;
     }
 
     .app-shell {
@@ -406,6 +450,10 @@ button.active {
     .main-stage,
     .sidebar {
         padding: 16px;
+    }
+
+    .brand {
+        margin-bottom: 16px;
     }
 
     .topbar,
@@ -422,15 +470,163 @@ button.active {
 
     .now-playing {
         display: grid;
+        gap: 16px;
+        padding: 14px;
+    }
+
+    .now-playing img {
+        max-width: 280px;
+        justify-self: center;
+    }
+
+    .track-copy h3 {
+        font-size: clamp(28px, 10vw, 44px);
+    }
+
+    .song-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .player-bar {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        padding: 12px;
     }
 
     .buttons {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
     }
 
     .buttons button,
     .extras button {
         padding-inline: 8px;
+    }
+
+    .timeline {
+        gap: 6px;
+    }
+}
+
+/* Small mobile screens get bigger tap targets and one-column song cards. */
+@media (max-width: 520px) {
+    body {
+        padding-bottom: 316px;
+    }
+
+    button {
+        min-height: 42px;
+        padding: 9px 10px;
+        font-size: 14px;
+    }
+
+    .app-shell {
+        width: calc(100% - 14px);
+        margin: 7px auto;
+    }
+
+    .brand-mark {
+        width: 40px;
+        height: 40px;
+        font-size: 21px;
+    }
+
+    .brand h1 {
+        font-size: 24px;
+    }
+
+    .topbar h2,
+    .library-head h2 {
+        font-size: 24px;
+    }
+
+    .search-box {
+        min-width: 100%;
+    }
+
+    .folder-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .folder-btn {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .song-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .song-card {
+        grid-template-columns: 78px minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .song-card img {
+        grid-row: span 2;
+    }
+
+    .card-actions {
+        grid-column: 2;
+    }
+
+    .mini-track {
+        justify-content: flex-start;
+    }
+
+    .extras {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .volume {
+        grid-column: 1 / -1;
+        min-width: 0;
+    }
+}
+
+/* Extra tiny phones stay usable instead of squeezing text into controls. */
+@media (max-width: 380px) {
+    body {
+        padding-bottom: 342px;
+    }
+
+    .main-stage,
+    .sidebar {
+        padding: 12px;
+    }
+
+    .folder-list,
+    .buttons,
+    .extras {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .primary-btn,
+    #stopBtn,
+    #loopBtn,
+    .volume {
+        grid-column: 1 / -1;
+    }
+
+    .song-card {
+        grid-template-columns: 64px minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .card-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline span {
+        width: 34px;
+        font-size: 12px;
     }
 }
