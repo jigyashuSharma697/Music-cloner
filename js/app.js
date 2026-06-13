@@ -178,6 +178,11 @@ const drawerArtist = document.querySelector("#drawerArtist");
 const drawerPlayBtn = document.querySelector("#drawerPlayBtn");
 const drawerLikeBtn = document.querySelector("#drawerLikeBtn");
 const miniTrack = document.querySelector(".mini-track");
+const musicUpload = document.querySelector("#musicUpload");
+const mobileMenu = document.querySelector("#mobileMenu");
+const mobileMenuBtn = document.querySelector("#mobileMenuBtn");
+const mobileMenuBackdrop = document.querySelector("#mobileMenuBackdrop");
+const mobileMenuCloseBtn = document.querySelector("#mobileMenuCloseBtn");
 
 let currentIndex = 0;
 let drawerIndex = 0;
@@ -185,6 +190,7 @@ let activeFolder = "All";
 let loopMode = "off";
 let filteredTracks = [...tracks];
 let likedSongs = JSON.parse(localStorage.getItem("beatflowLikes") || "[]");
+let localSongCount = 0;
 
 // The app starts with a valid cover and track before the user presses play.
 audio.volume = Number(volumeControl.value);
@@ -209,9 +215,41 @@ function renderFolders() {
             activeFolder = folder;
             renderFolders();
             renderSongs();
+            closeMobileMenu();
         });
         folderList.appendChild(button);
     });
+}
+
+function addLocalSongs(files) {
+    const firstNewIndex = tracks.length;
+
+    Array.from(files)
+        .filter((file) => file.type.startsWith("audio/"))
+        .forEach((file) => {
+            localSongCount += 1;
+            const cleanTitle = file.name
+                .replace(/\.[^/.]+$/, "")
+                .replace(/[-_]+/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            tracks.push({
+                title: cleanTitle || `Local Song ${localSongCount}`,
+                artist: "Local File",
+                folder: "Local",
+                src: URL.createObjectURL(file),
+                cover: `https://picsum.photos/seed/local-${Date.now()}-${localSongCount}/500/500`
+            });
+        });
+
+    activeFolder = "Local";
+    renderFolders();
+    renderSongs();
+
+    if (tracks[firstNewIndex]) {
+        openDrawer(firstNewIndex);
+    }
 }
 
 function getTracksByFolder(folder) {
@@ -409,6 +447,16 @@ function showPlayer() {
     document.body.classList.remove("player-hidden");
 }
 
+function openMobileMenu() {
+    mobileMenu.classList.add("open");
+    mobileMenu.setAttribute("aria-hidden", "false");
+}
+
+function closeMobileMenu() {
+    mobileMenu.classList.remove("open");
+    mobileMenu.setAttribute("aria-hidden", "true");
+}
+
 function toggleMute() {
     audio.muted = !audio.muted;
     muteBtn.textContent = audio.muted ? "Unmute" : "Mute";
@@ -449,6 +497,14 @@ drawerCloseBtn.addEventListener("click", closeDrawer);
 drawerPlayBtn.addEventListener("click", playDrawerTrack);
 drawerLikeBtn.addEventListener("click", () => toggleLike(tracks[drawerIndex].title));
 miniTrack.addEventListener("click", () => openDrawer(currentIndex));
+musicUpload.addEventListener("change", (event) => {
+    addLocalSongs(event.target.files);
+    event.target.value = "";
+    closeMobileMenu();
+});
+mobileMenuBtn.addEventListener("click", openMobileMenu);
+mobileMenuBackdrop.addEventListener("click", closeMobileMenu);
+mobileMenuCloseBtn.addEventListener("click", closeMobileMenu);
 
 volumeControl.addEventListener("input", () => {
     audio.volume = Number(volumeControl.value);

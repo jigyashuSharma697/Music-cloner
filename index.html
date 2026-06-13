@@ -15,10 +15,30 @@
                     <h1>BeatFlow</h1>
                     <p>Copyright-safe music</p>
                 </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" title="Open music folders">...</button>
             </div>
 
-            <!-- Folder buttons are connected with JavaScript filters. -->
-            <nav class="folder-list" id="folderList" aria-label="Playlist folders"></nav>
+            <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+                <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+                <section class="mobile-menu-panel">
+                    <div class="mobile-menu-head">
+                        <h2>Music Folders</h2>
+                        <button id="mobileMenuCloseBtn" type="button" title="Close music folders">X</button>
+                    </div>
+
+                    <!-- Folder buttons are connected with JavaScript filters. -->
+                    <nav class="folder-list" id="folderList" aria-label="Playlist folders"></nav>
+
+                    <section class="local-upload" aria-label="Add local music">
+                        <h2>Add Real Music</h2>
+                        <p>Select MP3 files from your device for college demo. Files stay in your browser only.</p>
+                        <label class="upload-btn">
+                            Choose Songs
+                            <input id="musicUpload" type="file" accept="audio/*" multiple>
+                        </label>
+                    </section>
+                </section>
+            </div>
         </aside>
 
         <section class="main-stage">
@@ -40,7 +60,7 @@
                     <h3 id="trackTitle">Select a song</h3>
                     <p id="trackArtist">Ready to play</p>
                     <p class="track-note" id="trackNote">
-                        These demo tracks use royalty-free sample audio links.
+                        Use built-in copyright-safe tracks or add your own local MP3 files for demo.
                     </p>
                 </div>
             </section>
@@ -104,7 +124,7 @@
             <p class="status-pill" id="drawerFolder">Music</p>
             <h2 id="drawerTitle">Song Title</h2>
             <p id="drawerArtist">Artist</p>
-            <p class="track-note">Tap play to start this track. The audio is copyright-safe demo music.</p>
+            <p class="track-note">Tap play to start this track. Local songs play only from your device.</p>
             <div class="drawer-actions">
                 <button id="drawerPlayBtn" class="primary-btn" type="button">Play</button>
                 <button id="drawerLikeBtn" type="button">Like</button>
